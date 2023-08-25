@@ -1,23 +1,30 @@
 class StringCalculator
+  attr_reader :str
+
   def add(str)
     return 0 if str.empty?
-    return str.to_i unless str.include?(',') || str.include?('\n')
-
-    ints = Delimiter.create(str).split
-
-    ensure_positive_numbers(ints)
-
-    filter_numbers_less_than_1000(ints).sum { |x| x.to_i }
+    # ints.sum
+    valid_ints(str).sum
   end
 
   private
-  
-  def filter_numbers_less_than_1000(ints)
-    ints.filter { |i| i.to_i <= 1000 }
+
+  def valid_ints(str)
+    @str = str
+    ensure_positive_numbers
+    filter_numbers_less_than_1000
   end
 
-  def ensure_positive_numbers(ints)
-    negatives = ints.filter { |i| i.to_i < 0 }
+  def ints
+    @ints ||= Delimiter.create(str).split.map { |str| str.to_i }
+  end
+  
+  def filter_numbers_less_than_1000
+    ints.filter { |i| i <= 1000 }
+  end
+
+  def ensure_positive_numbers
+    negatives = ints.filter { |i| i < 0 }
     raise StandardError, "negatives not allowed: #{negatives.join(',')}" if negatives.length > 0
   end
 end
